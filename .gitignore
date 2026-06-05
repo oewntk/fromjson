@@ -1,0 +1,13 @@
+/target/
+/build/
+
+/json*/
+/json*
+
+**/_*/
+**/_*
+**/*.ser
+**/*.info
+**/build
+
+/dependency-reduced-pom.xml
