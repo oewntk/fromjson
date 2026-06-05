@@ -1,4 +1,4 @@
-package org.oewntk.json.out.data
+package org.oewntk.json.`in`.data
 
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec

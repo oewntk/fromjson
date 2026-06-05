@@ -4,6 +4,7 @@ import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
 import org.oewntk.model.CoreModel
+import org.oewntk.model.ModelInfo
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -53,5 +54,53 @@ class CoreFactory(
             e.printStackTrace(Tracing.psErr)
         }
         return null
+    }
+
+    companion object {
+
+        /**
+         * Make core model from YAML files
+         *
+         * @param args command-line arguments
+         * @return core model
+         */
+        private fun makeCoreModel(args: Array<String>): CoreModel? {
+            var iArg = 0
+            var verbose = true
+            if ("--verbose" == args[iArg]) {
+                verbose = false
+                iArg++
+            }
+            var split = false
+            if ("--split" == args[iArg]) {
+                split = true
+                iArg++
+            }
+            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            if ("--json" == args[iArg]) {
+                iArg++
+                val arg = args[iArg]
+                iArg++
+                jsonMethod = when (arg) {
+                    "s" -> JsonMethod.ANY_SERIALIZER
+                    "v" -> JsonMethod.VALUE_WRAPPER
+                    "j" -> JsonMethod.JSON_ELEMENT
+                    else -> JsonMethod.ANY_SERIALIZER
+                }
+            }
+            val inDir = File(args[iArg])
+            return CoreFactory(inDir, split = split, jsonMethod = jsonMethod, verbose = verbose).get()
+        }
+
+        /**
+         * Main
+         *
+         * @param args command-line arguments
+         */
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val model = makeCoreModel(args)
+            Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
+        }
     }
 }

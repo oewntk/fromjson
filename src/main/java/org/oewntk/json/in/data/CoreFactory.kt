@@ -1,9 +1,10 @@
-package org.oewntk.json.out.data
+package org.oewntk.json.`in`.data
 
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
 import org.oewntk.model.CoreModel
+import org.oewntk.model.ModelInfo
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -67,4 +68,41 @@ class CoreFactory(
         }
         return null
     }
+
+    companion object {
+
+        /**
+         * Make core model from YAML files
+         *
+         * @param args command-line arguments
+         * @return core model
+         */
+        private fun makeCoreModel(args: Array<String>): CoreModel? {
+            var iArg = 0
+            var fileext = "yaml"
+            var verbose = true
+            if ("--verbose" == args[iArg]) {
+                verbose = false
+                iArg++
+            }
+            if ("--json" == args[iArg]) {
+                fileext = "json"
+                iArg++
+            }
+            val inDir = File(args[iArg])
+            return CoreFactory(inDir, fileext = fileext, verbose = verbose).get()
+        }
+
+        /**
+         * Main
+         *
+         * @param args command-line arguments
+         */
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val model = makeCoreModel(args)
+            Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
+        }
+    }
+
 }

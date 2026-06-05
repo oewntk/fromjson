@@ -3,8 +3,10 @@ package org.oewntk.json.`in`.model
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.oewntk.json.`in`.Tracing
+import org.oewntk.model.CoreModel
 import org.oewntk.model.DataModel
 import org.oewntk.model.Model
+import org.oewntk.model.ModelInfo
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -44,4 +46,41 @@ class Factory(
         }
         return null
     }
+
+    companion object {
+
+        /**
+         * Make core model from YAML files
+         *
+         * @param args command-line arguments
+         * @return core model
+         */
+        private fun makeCoreModel(args: Array<String>): CoreModel? {
+            var iArg = 0
+            var fileext = "yaml"
+            var verbose = true
+            if ("--verbose" == args[iArg]) {
+                verbose = false
+                iArg++
+            }
+            if ("--json" == args[iArg]) {
+                fileext = "json"
+                iArg++
+            }
+            val inDir = File(args[iArg])
+            return CoreFactory(inDir, fileext = fileext, verbose = verbose).get()
+        }
+
+        /**
+         * Main
+         *
+         * @param args command-line arguments
+         */
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val model = makeCoreModel(args)
+            org.oewntk.yaml.`in`.Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
+        }
+    }
+
 }
