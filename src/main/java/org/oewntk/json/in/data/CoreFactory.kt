@@ -3,8 +3,7 @@ package org.oewntk.json.`in`.data
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
-import org.oewntk.model.CoreModel
-import org.oewntk.model.ModelInfo
+import org.oewntk.model.*
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -50,10 +49,13 @@ class CoreFactory(
 
                 Triple(content[0], content[1], content[2])
             }
-        val dataLexes = json.decodeFromString(lexContent)
-        val dataSynsets = json.decodeFromString(synsetContent)
-        val dataSenses = json.decodeFromString(senseContent)
-        return null
+        val dataLexes = safeCast<List<Map<String, Any>>>(json.decodeFromString(lexContent))
+        val lexes = dataLexes.map { lexFromData(it) }.toList()
+        val dataSynsets = safeCast<List<Map<String, Any>>>(json.decodeFromString(synsetContent))
+        val synsets = dataSynsets.map { synsetFromData(it) }.toList()
+        val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
+        val senses = dataSenses.map { senseFromData(it) }.toList()
+        return CoreModel(lexes, senses, synsets)
     }
 
     override fun get(): CoreModel? {
@@ -79,7 +81,7 @@ class CoreFactory(
          */
         private fun makeCoreModel(args: Array<String>): CoreModel? {
             var iArg = 0
-            var fileext = "yaml"
+            var fileext = "json"
             var verbose = true
             if ("--verbose" == args[iArg]) {
                 verbose = false
