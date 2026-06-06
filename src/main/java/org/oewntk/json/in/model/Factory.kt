@@ -12,9 +12,9 @@ import java.io.IOException
 import java.util.function.Supplier
 
 /**
- * Main class that serializes the model
+ * Main class that deserializes the model.
  *
- * @property file output file
+ * @property file input file
  * @author Bernard Bou
  */
 class Factory(
@@ -55,7 +55,7 @@ class Factory(
          * @param args command-line arguments
          * @return core model
          */
-        private fun makeCoreModel(args: Array<String>): CoreModel? {
+        private fun makeModel(args: Array<String>): Model? {
             var iArg = 0
             var fileext = "yaml"
             var verbose = true
@@ -68,7 +68,7 @@ class Factory(
                 iArg++
             }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, fileext = fileext, verbose = verbose).get()
+            return Factory(inDir, fileext = fileext, verbose = verbose).get()
         }
 
         /**
@@ -78,9 +78,8 @@ class Factory(
          */
         @JvmStatic
         fun main(args: Array<String>) {
-            val model = makeCoreModel(args)
-            org.oewntk.yaml.`in`.Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
+            val model = makeModel(args)
+            Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
         }
     }
-
 }
