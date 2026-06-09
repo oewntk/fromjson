@@ -58,9 +58,9 @@ class Factory(
         private fun makeModel(args: Array<String>): Model? {
             var iArg = 0
             var fileext = "yaml"
-            var verbose = true
+            var verbose = false
             if ("--verbose" == args[iArg]) {
-                verbose = false
+                verbose = true
                 iArg++
             }
             if ("--json" == args[iArg]) {

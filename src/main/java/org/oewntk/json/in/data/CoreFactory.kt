@@ -82,17 +82,35 @@ class CoreFactory(
         private fun makeCoreModel(args: Array<String>): CoreModel? {
             var iArg = 0
             var fileext = "json"
-            var verbose = true
+            var split = false
+            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var verbose = false
             if ("--verbose" == args[iArg]) {
-                verbose = false
+                verbose = true
                 iArg++
             }
             if ("--json" == args[iArg]) {
                 fileext = "json"
                 iArg++
             }
+            if ("--split" == args[iArg]) {
+                split = true
+                iArg++
+            }
+            if ("--oj" == args[iArg]) {
+                iArg++
+                val arg = args[iArg]
+                iArg++
+                jsonMethod = when (arg) {
+                    "a" -> JsonMethod.ANY_SERIALIZER
+                    "v" -> JsonMethod.VALUE_WRAPPER
+                    "j" -> JsonMethod.JSON_ELEMENT
+                    else -> throw IllegalArgumentException("Illegal serialization $arg")
+                }
+            }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, fileext = fileext, verbose = verbose).get()
+
+            return CoreFactory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = split, verbose = verbose).get()
         }
 
         /**
