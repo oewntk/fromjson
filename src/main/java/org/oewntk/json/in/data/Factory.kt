@@ -30,17 +30,17 @@ class Factory(
 
         val (frameContent, templateContent) =
             if (split) {
-                val frameFile = File(dir, "frames.$fileext")
+                val frameFile = File(dir, "oewn-frames.$fileext")
                 Tracing.psInfo.printf("[File] %s%n", frameFile)
                 val frameContent = frameFile.readText()
 
-                val templateFile = File(dir, "templates.$fileext")
+                val templateFile = File(dir, "oewn-templates.$fileext")
                 Tracing.psInfo.printf("[File] %s%n", templateFile)
                 val templateContent = templateFile.readText()
 
                 frameContent to templateContent
             } else {
-                val frameAndTemplateFile = File(dir, "frames_templates.$fileext")
+                val frameAndTemplateFile = File(dir, "oewn-frames_templates.$fileext")
                 Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
                 val text = frameAndTemplateFile.readText()
                 val content = text.split("\n\n")
