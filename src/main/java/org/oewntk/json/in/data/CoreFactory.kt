@@ -74,7 +74,7 @@ class CoreFactory(
     companion object {
 
         /**
-         * Make core model from YAML files
+         * Make core model from JSON files
          *
          * @param args command-line arguments
          * @return core model
@@ -82,7 +82,7 @@ class CoreFactory(
         private fun makeCoreModel(args: Array<String>): CoreModel? {
             var iArg = 0
             var fileext = "json"
-            var split = false
+            var one = false
             var jsonMethod = JsonMethod.ANY_SERIALIZER
             var verbose = false
             if ("--verbose" == args[iArg]) {
@@ -93,11 +93,11 @@ class CoreFactory(
                 fileext = "json"
                 iArg++
             }
-            if ("--split" == args[iArg]) {
-                split = true
+            if ("-1" == args[iArg]) {
+                one = true
                 iArg++
             }
-            if ("--oj" == args[iArg]) {
+            if ("-oj" == args[iArg]) {
                 iArg++
                 val arg = args[iArg]
                 iArg++
@@ -110,7 +110,7 @@ class CoreFactory(
             }
             val inDir = File(args[iArg])
 
-            return CoreFactory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = split, verbose = verbose).get()
+            return CoreFactory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
         }
 
         /**

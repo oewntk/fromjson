@@ -50,14 +50,14 @@ class Factory(
     companion object {
 
         /**
-         * Make core model from YAML files
+         * Make core model from JSON files
          *
          * @param args command-line arguments
          * @return core model
          */
         private fun makeModel(args: Array<String>): Model? {
             var iArg = 0
-            var fileext = "yaml"
+            var fileext = "json"
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true

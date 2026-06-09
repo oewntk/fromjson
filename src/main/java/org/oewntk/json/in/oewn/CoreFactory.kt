@@ -59,7 +59,7 @@ class CoreFactory(
     companion object {
 
         /**
-         * Make core model from YAML files
+         * Make core model from JSON files
          *
          * @param args command-line arguments
          * @return core model
