@@ -97,7 +97,7 @@ class CoreFactory(
                 one = true
                 iArg++
             }
-            if ("-oj" == args[iArg]) {
+            if ("-ij" == args[iArg]) {
                 iArg++
                 val arg = args[iArg]
                 iArg++

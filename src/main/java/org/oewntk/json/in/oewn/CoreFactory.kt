@@ -78,14 +78,15 @@ class CoreFactory(
             }
             var jsonMethod = JsonMethod.ANY_SERIALIZER
             if ("--json" == args[iArg]) {
+            if ("-ij" == args[iArg]) {
                 iArg++
                 val arg = args[iArg]
                 iArg++
                 jsonMethod = when (arg) {
-                    "s" -> JsonMethod.ANY_SERIALIZER
+                    "a" -> JsonMethod.ANY_SERIALIZER
                     "v" -> JsonMethod.VALUE_WRAPPER
                     "j" -> JsonMethod.JSON_ELEMENT
-                    else -> JsonMethod.ANY_SERIALIZER
+                    else -> throw IllegalArgumentException("Illegal serialization $arg")
                 }
             }
             val inDir = File(args[iArg])
