@@ -3,9 +3,11 @@ package org.oewntk.json.`in`.data
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
+import org.oewntk.model.DataModel
 import org.oewntk.model.Model
 import org.oewntk.model.VerbFrame
 import org.oewntk.model.VerbTemplate
+import org.oewntk.model.safeCast
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -26,7 +28,7 @@ class Factory(
 
     val json = JsonCodec(jsonMethod = jsonMethod)
 
-    private fun jsonModel(dir: File): Pair<Collection<VerbFrame>, Collection<VerbTemplate>>? {
+    private fun jsonModel(dir: File): Pair<Collection<VerbFrame>, Collection<VerbTemplate>> {
 
         val (frameContent, templateContent) =
             if (split) {
@@ -47,8 +49,8 @@ class Factory(
                 content[0] to content[1]
             }
         val frames = json.decodeFromString(frameContent)
-        val templates = json.encodeToString(templateContent)
-        return null
+        val templates = json.decodeFromString(templateContent)
+        return safeCast<Collection<VerbFrame>>(frames) to safeCast<Collection<VerbTemplate>>(templates)
     }
 
     override fun get(): Model? {
@@ -59,8 +61,9 @@ class Factory(
         val coreModel = CoreFactory(inDir, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
         try {
             val framesAndTemplates = jsonModel(inDir)
-            framesAndTemplates?.let { val (frames, templates) = it }
-
+                val (frames, templates) = framesAndTemplates
+                val data = DataModel(coreModel!!, frames, templates)
+                return Model(data, inDir.absolutePath, inDir.absolutePath)
         } catch (e: IOException) {
             e.printStackTrace(Tracing.psErr)
         }
