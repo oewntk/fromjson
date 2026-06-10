@@ -66,18 +66,22 @@ class CoreFactory(
          */
         private fun makeCoreModel(args: Array<String>): CoreModel? {
             var iArg = 0
+            var fileext = "json"
+            var one = false
+            var jsonMethod = JsonMethod.ANY_SERIALIZER
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
                 iArg++
             }
-            var split = false
-            if ("--split" == args[iArg]) {
-                split = true
+            if ("--json" == args[iArg]) {
+                fileext = "json"
                 iArg++
             }
-            var jsonMethod = JsonMethod.ANY_SERIALIZER
-            if ("--json" == args[iArg]) {
+            if ("-1" == args[iArg]) {
+                one = true
+                iArg++
+            }
             if ("-ij" == args[iArg]) {
                 iArg++
                 val arg = args[iArg]
@@ -90,7 +94,7 @@ class CoreFactory(
                 }
             }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, split = split, jsonMethod = jsonMethod, verbose = verbose).get()
+            return CoreFactory(inDir, split = !one, jsonMethod = jsonMethod, verbose = verbose).get()
         }
 
         /**
