@@ -28,7 +28,7 @@ class Factory(
 
     val json = JsonCodec(jsonMethod = jsonMethod)
 
-    private fun jsonModel(dir: File): Pair<Collection<VerbFrame>, Collection<VerbTemplate>> {
+    private fun jsonExtra(dir: File): Pair<Collection<VerbFrame>, Collection<VerbTemplate>> {
 
         val (frameContent, templateContent) =
             if (split) {
@@ -60,7 +60,7 @@ class Factory(
         }
         val coreModel = CoreFactory(inDir, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
         try {
-            val framesAndTemplates = jsonModel(inDir)
+            val framesAndTemplates = jsonExtra(inDir)
                 val (frames, templates) = framesAndTemplates
                 val data = DataModel(coreModel!!, frames, templates)
                 return Model(data, inDir.absolutePath, inDir.absolutePath)
