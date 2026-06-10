@@ -45,9 +45,11 @@ class Factory(
                 val content = text.split("\n\n")
                 content[0] to content[1]
             }
-        val frames = json.decodeFromString(frameContent)
-        val templates = json.decodeFromString(templateContent)
-        return safeCast<Collection<VerbFrame>>(frames) to safeCast<Collection<VerbTemplate>>(templates)
+        val frameMap = safeCast<Map<VerbFrameId, String>>(json.decodeFromString(frameContent))
+        val templateMap = safeCast<Map<String, String>>(json.decodeFromString(templateContent))
+        val frames = frameMap.entries.map { VerbFrame(it.key, it.value) }.toList()
+        val templates = templateMap.entries.map { VerbTemplate(it.key.toInt(), it.value) }.toList()
+        return frames to templates
     }
 
     override fun get(): Model? {
