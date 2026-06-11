@@ -3,8 +3,7 @@ package org.oewntk.json.`in`.oewn
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
-import org.oewntk.model.CoreModel
-import org.oewntk.model.ModelInfo
+import org.oewntk.model.*
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
@@ -20,27 +19,56 @@ class CoreFactory(
     val split: Boolean = true,
     val fileext: String = "json",
     jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
-    private val verbose: Boolean = false,
+    private val verbose: Boolean = true,
 ) : Supplier<CoreModel?> {
 
     val json = JsonCodec(jsonMethod = jsonMethod)
 
     private fun jsonCoreModel(inDir: File): CoreModel? {
-        if (split) {
-            val files = inDir.listFiles { f: File -> f.name.matches("entries.*\\.$fileext".toRegex()) }!!
-            files.forEach { file ->
-                Tracing.psInfo.printf("[File] %s%n", file)
+        return if (split) {
+            val entryFiles = inDir.listFiles { f: File -> f.name.matches("entries.*\\.$fileext".toRegex()) }!!
+
+            // lexes and senses
+            val lexesAndSenses = entryFiles.map { file ->
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val content = file.readText()
-                val serializable = json.encodeToString(content)
+                val topDict = safeCast<Map<Lemma, Map<Key2, Map<String, Any>>>>(json.decodeFromString(content))
+                lexesAndSensesFromOEWNData(topDict)
             }
+            val allLexes = lexesAndSenses.asSequence().flatMap { it.first }
+            val allSenses = lexesAndSenses.asSequence().flatMap { it.second }
+
+            // synsets
+            val synsetFiles = inDir.listFiles { f: File -> f.name.matches("(noun|verb|adj|adv).*\\.$fileext".toRegex()) }!!
+            val synsets = synsetFiles.map { file ->
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+                val content = file.readText()
+                val topDict = safeCast<Map<SynsetId, Any>>(json.decodeFromString(content))
+                topDict.asSequence().map {
+                    val synsetDict = safeCast<Map<String, Any>>(it.value)
+                    synsetFromOEWNData(it.key, synsetDict)
+                }
+            }
+            val allSynsets = synsets.asSequence().flatten()
+
+            // model
+            CoreModel(allLexes.toList(), allSenses.toList(), allSynsets.toList())
 
         } else {
             val file = File(inDir, "oewn.$fileext")
-            val content = file.readText()
-            val serializable = json.decodeFromString(content)
-            Tracing.psInfo.printf("[File] %s%n", file)
+            if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+            val content = file.readText().split("\n\n")
+            val lexTopDict = safeCast<Map<Lemma, Map<Key2, Map<String, Any>>>>(json.decodeFromString(content[0]))
+            val (allLexes, allSenses) = lexesAndSensesFromOEWNData(lexTopDict)
+            val dataTopDict = safeCast<Map<SynsetId, Any>>(json.decodeFromString(content[1]))
+            val allSynsets = dataTopDict.asSequence().map {
+                val synsetDict = safeCast<Map<String, Any>>(it.value)
+                synsetFromOEWNData(it.key, synsetDict)
+            }
+
+            // model
+            CoreModel(allLexes.toList(), allSenses.toList(), allSynsets.toList())
         }
-        return null
     }
 
     override fun get(): CoreModel? {
@@ -94,7 +122,7 @@ class CoreFactory(
                 }
             }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, split = !one, jsonMethod = jsonMethod, verbose = verbose).get()
+            return CoreFactory(inDir, split = !one, fileext = fileext, jsonMethod = jsonMethod, verbose = verbose).get()
         }
 
         /**
