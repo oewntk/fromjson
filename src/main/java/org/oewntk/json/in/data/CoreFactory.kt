@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.function.Supplier
 
 /**
- * Main class that serializes the core model.
+ * Main class that deserializes a core model.
  *
  * @property inDir input dir
  * @author Bernard Bou
@@ -29,21 +29,21 @@ class CoreFactory(
         val (lexContent, synsetContent, senseContent) =
             if (split) {
                 var file = File(dir, "oewn-lexes.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", file)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val lexContent = file.readText()
 
                 file = File(dir, "oewn-synsets.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", file)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val synsetContent = file.readText()
 
                 file = File(dir, "oewn-senses.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", file)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val senseContent = file.readText()
 
                 Triple(lexContent, synsetContent, senseContent)
             } else {
                 val file = File(dir, "oewn.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", file)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val text = file.readText()
                 val content = text.split("\n\n")
 
@@ -59,7 +59,7 @@ class CoreFactory(
     }
 
     override fun get(): CoreModel? {
-        Tracing.psInfo.printf("[CoreModel] %s%n", inDir)
+        if (verbose) Tracing.psInfo.printf("[CoreModel] %s%n", inDir)
         if (!inDir.exists()) {
             throw IllegalArgumentException(inDir.absolutePath)
         }
@@ -124,5 +124,4 @@ class CoreFactory(
             Tracing.psInfo.printf("[CoreModel] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
         }
     }
-
 }

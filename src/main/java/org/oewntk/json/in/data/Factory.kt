@@ -3,17 +3,13 @@ package org.oewntk.json.`in`.data
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.json.out.JsonCodec
 import org.oewntk.json.out.JsonMethod
-import org.oewntk.model.DataModel
-import org.oewntk.model.Model
-import org.oewntk.model.VerbFrame
-import org.oewntk.model.VerbTemplate
-import org.oewntk.model.safeCast
+import org.oewntk.model.*
 import java.io.File
 import java.io.IOException
 import java.util.function.Supplier
 
 /**
- * Main class that serializes the core model.
+ * Main class that deserializes a model.
  *
  * @property inDir output dir
  * @author Bernard Bou
@@ -33,17 +29,17 @@ class Factory(
         val (frameContent, templateContent) =
             if (split) {
                 val frameFile = File(dir, "oewn-frames.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", frameFile)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", frameFile)
                 val frameContent = frameFile.readText()
 
                 val templateFile = File(dir, "oewn-templates.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", templateFile)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", templateFile)
                 val templateContent = templateFile.readText()
 
                 frameContent to templateContent
             } else {
                 val frameAndTemplateFile = File(dir, "oewn-frames_templates.$fileext")
-                Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
+                if (verbose) Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
                 val text = frameAndTemplateFile.readText()
                 val content = text.split("\n\n")
                 content[0] to content[1]
@@ -54,7 +50,7 @@ class Factory(
     }
 
     override fun get(): Model? {
-        Tracing.psInfo.println("[Model] $inDir")
+        if (verbose) Tracing.psInfo.println("[Model] $inDir")
         if (!inDir.exists()) {
             throw IllegalArgumentException(inDir.absolutePath)
         }
@@ -68,5 +64,60 @@ class Factory(
             e.printStackTrace(Tracing.psErr)
         }
         return null
+    }
+
+
+    companion object {
+
+        /**
+         * Make model from JSON files
+         *
+         * @param args command-line arguments
+         * @return model
+         */
+        private fun makeModel(args: Array<String>): Model? {
+            var iArg = 0
+            var fileext = "json"
+            var one = false
+            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var verbose = false
+            if ("--verbose" == args[iArg]) {
+                verbose = true
+                iArg++
+            }
+            if ("--json" == args[iArg]) {
+                fileext = "json"
+                iArg++
+            }
+            if ("-1" == args[iArg]) {
+                one = true
+                iArg++
+            }
+            if ("-ij" == args[iArg]) {
+                iArg++
+                val arg = args[iArg]
+                iArg++
+                jsonMethod = when (arg) {
+                    "a" -> JsonMethod.ANY_SERIALIZER
+                    "v" -> JsonMethod.VALUE_WRAPPER
+                    "j" -> JsonMethod.JSON_ELEMENT
+                    else -> throw IllegalArgumentException("Illegal serialization $arg")
+                }
+            }
+            val inDir = File(args[iArg])
+
+            return Factory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
+        }
+
+        /**
+         * Main
+         *
+         * @param args command-line arguments
+         */
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val model = makeModel(args)
+            Tracing.psInfo.printf("[Model] %s%n%s%n%s%n", model!!.source, model.info(), ModelInfo.counts(model))
+        }
     }
 }

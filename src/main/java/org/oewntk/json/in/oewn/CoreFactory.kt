@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.function.Supplier
 
 /**
- * Main class that serializes the core model.
+ * Main class that deserializes a core model.
  *
  * @property inDir output dir
  * @author Bernard Bou
