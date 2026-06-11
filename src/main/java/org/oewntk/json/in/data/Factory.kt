@@ -44,9 +44,9 @@ class Factory(
                 val content = text.split("\n\n")
                 content[0] to content[1]
             }
-        val frames = json.decodeFromString(frameContent)
-        val templates = json.decodeFromString(templateContent)
-        return safeCast<Collection<VerbFrame>>(frames) to safeCast<Collection<VerbTemplate>>(templates)
+        val frames = safeCast<Map<String, String>>(json.decodeFromString(frameContent))
+        val templates = safeCast<Map<String, String>>(json.decodeFromString(templateContent))
+        return (frames.map { VerbFrame(it.key, it.value) }.toList()) to (templates.map { VerbTemplate(it.key.toInt(), it.value) }.toList())
     }
 
     override fun get(): Model? {
@@ -57,9 +57,9 @@ class Factory(
         val coreModel = CoreFactory(inDir, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
         try {
             val framesAndTemplates = jsonExtra(inDir)
-                val (frames, templates) = framesAndTemplates
-                val data = DataModel(coreModel!!, frames, templates)
-                return Model(data, inDir.absolutePath, inDir.absolutePath)
+            val (frames, templates) = framesAndTemplates
+            val data = DataModel(coreModel!!, frames, templates)
+            return Model(data, inDir.absolutePath, inDir.absolutePath)
         } catch (e: IOException) {
             e.printStackTrace(Tracing.psErr)
         }
