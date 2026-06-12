@@ -24,7 +24,7 @@ class CoreFactory(
 
     val json = JsonCodec(jsonMethod = jsonMethod)
 
-    private fun jsonCoreModel(dir: File): CoreModel? {
+    private fun jsonCoreModel(dir: File): CoreModel {
 
         val (lexContent, synsetContent, senseContent) =
             if (split) {
