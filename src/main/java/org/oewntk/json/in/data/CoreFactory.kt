@@ -50,11 +50,11 @@ class CoreFactory(
                 Triple(content[0], content[1], content[2])
             }
         val dataLexes = safeCast<List<Map<String, Any>>>(json.decodeFromString(lexContent))
-        val lexes = dataLexes.map { lexFromData(it) }.toList()
+        val lexes = dataLexes.map { lexFromData(it) }.toSet()
         val dataSynsets = safeCast<List<Map<String, Any>>>(json.decodeFromString(synsetContent))
-        val synsets = dataSynsets.map { synsetFromData(it) }.toList()
+        val synsets = dataSynsets.map { synsetFromData(it) }.toSet()
         val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
-        val senses = dataSenses.map { senseFromData(it) }.toList()
+        val senses = dataSenses.map { senseFromData(it) }.toSet()
         return CoreModel(lexes, senses, synsets)
     }
 

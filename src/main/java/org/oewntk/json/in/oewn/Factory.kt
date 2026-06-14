@@ -25,7 +25,7 @@ class Factory(
 
     val json = JsonCodec(jsonMethod = jsonMethod, prettyPrint = prettyPrint)
 
-    private fun jsonExtra(dir: File): Pair<Collection<VerbFrame>, Collection<VerbTemplate>> {
+    private fun jsonExtra(dir: File): Pair<Set<VerbFrame>, Set<VerbTemplate>> {
 
         val (frameContent, templateContent) =
             if (split) {
@@ -47,8 +47,8 @@ class Factory(
             }
         val frameMap = safeCast<Map<VerbFrameId, String>>(json.decodeFromString(frameContent))
         val templateMap = safeCast<Map<String, String>>(json.decodeFromString(templateContent))
-        val frames = frameMap.entries.map { VerbFrame(it.key, it.value) }.toList()
-        val templates = templateMap.entries.map { VerbTemplate(it.key.toInt(), it.value) }.toList()
+        val frames = frameMap.entries.map { VerbFrame(it.key, it.value) }.toSet()
+        val templates = templateMap.entries.map { VerbTemplate(it.key.toInt(), it.value) }.toSet()
         return frames to templates
     }
 
