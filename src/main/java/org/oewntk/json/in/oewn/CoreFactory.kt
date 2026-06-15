@@ -52,7 +52,11 @@ class CoreFactory(
             val allSynsets = synsets.asSequence().flatten()
 
             // model
-            CoreModel(allLexes.toSet(), allSenses.toSet(), allSynsets.toSet())
+            CoreModel(
+                allLexes.distinct().toList(),
+                allSenses.distinct().toList(),
+                allSynsets.distinct().toList()
+            )
 
         } else {
             val file = File(inDir, "oewn.$fileext")
@@ -67,7 +71,7 @@ class CoreFactory(
             }
 
             // model
-            CoreModel(allLexes.toSet(), allSenses.toSet(), allSynsets.toSet())
+            CoreModel(allLexes.toList(), allSenses.toList(), allSynsets.toList())
         }
     }
 
