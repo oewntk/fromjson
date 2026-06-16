@@ -107,9 +107,9 @@ class TestJsonMethods {
 
         val ps: PrintStream = if (!silent) Tracing.psInfo else Tracing.psNull
 
-        @JvmStatic
-        @BeforeClass
-        fun init() {
-        }
+        // @JvmStatic
+        // @BeforeClass
+        // fun init() {
+        // }
     }
 }
