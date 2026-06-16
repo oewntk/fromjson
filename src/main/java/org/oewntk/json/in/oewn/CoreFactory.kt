@@ -53,9 +53,9 @@ class CoreFactory(
 
             // model
             CoreModel(
-                allLexes.distinct().toList(),
-                allSenses.distinct().toList(),
-                allSynsets.distinct().toList()
+                allLexes.sorted().distinct().toList(),
+                allSenses.sorted().distinct().toList(),
+                allSynsets.sorted().distinct().toList()
             )
 
         } else {
@@ -71,7 +71,7 @@ class CoreFactory(
             }
 
             // model
-            CoreModel(allLexes.toList(), allSenses.toList(), allSynsets.toList())
+            CoreModel(allLexes.sorted().distinct().toList(), allSenses.sorted().distinct().toList(), allSynsets.sorted().distinct().toList())
         }
     }
 
