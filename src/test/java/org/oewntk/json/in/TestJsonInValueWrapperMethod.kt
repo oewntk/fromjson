@@ -1,0 +1,61 @@
+package org.oewntk.json.`in`
+
+import kotlinx.serialization.SerializationException
+import org.junit.Test
+import org.oewntk.json.`in`.LibTestData.lex
+import org.oewntk.json.`in`.LibTestData.sense
+import org.oewntk.json.`in`.LibTestData.synset
+import org.oewntk.json.out.JsonCodec
+import org.oewntk.json.out.JsonMethod
+import org.oewntk.model.*
+import org.oewntk.model.Tracing
+import java.io.PrintStream
+
+class TestJsonInValueWrapperMethod {
+
+    val json = JsonCodec(jsonMethod = JsonMethod.VALUE_WRAPPER)
+
+    @Test
+    fun testValueWrapperDummyLex() {
+        val serializable: Map<String, Any> = lex.toData()
+        val jsonString = json.encodeToString(serializable)
+        ps.println(jsonString)
+        val serializable2 = safeCast<Map<String, Any>>(json.decodeFromString(jsonString))
+        val lex = lexFromData(serializable2)
+        ps.println(lex)
+    }
+
+    @Test
+    fun testValueWrapperDummySynset() {
+        val serializable: Map<String, Any> = synset.toData()
+        val jsonString = json.encodeToString(serializable)
+        ps.println(jsonString)
+        val serializable2 = safeCast<Map<String, Any>>(json.decodeFromString(jsonString))
+        val synset = synsetFromData(serializable2)
+        ps.println(synset)
+    }
+
+    @Test
+    fun testValueWrapperDummySense() {
+        val serializable: Map<String, Any> = sense.toData()
+        val jsonString = json.encodeToString(serializable)
+        ps.println(jsonString)
+        val serializable2 = safeCast<Map<String, Any>>(json.decodeFromString(jsonString))
+        val sense = senseFromData(serializable2)
+        ps.println(sense)
+    }
+
+    companion object {
+
+        val silent = if (System.getProperties().containsKey("VERBOSE")) false
+        else if (System.getProperties().containsKey("SILENT")) true
+        else true
+
+        val ps: PrintStream = if (!silent) Tracing.psInfo else Tracing.psNull
+
+        // @JvmStatic
+        // @BeforeClass
+        // fun init() {
+        // }
+    }
+}
