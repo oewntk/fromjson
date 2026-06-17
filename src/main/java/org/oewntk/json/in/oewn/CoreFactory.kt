@@ -106,11 +106,13 @@ class CoreFactory(
                 verbose = true
                 iArg++
             }
-            if ("--json" == args[iArg]) {
-                fileext = "json"
+            if ("--ext" == args[iArg]) {
                 iArg++
+                val arg = args[iArg]
+                iArg++
+                fileext = arg
             }
-            if ("-1" == args[iArg]) {
+            if ("-i1" == args[iArg]) {
                 one = true
                 iArg++
             }
