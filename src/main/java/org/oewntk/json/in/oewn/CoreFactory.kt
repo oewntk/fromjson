@@ -16,8 +16,9 @@ import java.util.function.Supplier
  */
 class CoreFactory(
     private val inDir: File,
-    val split: Boolean = true,
-    val fileext: String = "json",
+    private val inverses: Boolean = false,
+    private val split: Boolean = true,
+    private val fileext: String = "json",
     jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
     private val verbose: Boolean = true,
 ) : Supplier<CoreModel?> {
@@ -57,6 +58,7 @@ class CoreFactory(
                 allSenses.sorted().distinct().toList(),
                 allSynsets.sorted().distinct().toList()
             )
+                .apply { if (inverses) generateInverseRelations() }
 
         } else {
             val file = File(inDir, "oewn.$fileext")
@@ -72,6 +74,7 @@ class CoreFactory(
 
             // model
             CoreModel(allLexes.sorted().distinct().toList(), allSenses.sorted().distinct().toList(), allSynsets.sorted().distinct().toList())
+                .apply { if (inverses) generateInverseRelations() }
         }
     }
 
@@ -101,9 +104,14 @@ class CoreFactory(
             var fileext = "json"
             var one = false
             var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
+                iArg++
+            }
+            if ("--inverses" == args[iArg]) {
+                inverses = true
                 iArg++
             }
             if ("--ext" == args[iArg]) {
@@ -128,7 +136,7 @@ class CoreFactory(
                 }
             }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, split = !one, fileext = fileext, jsonMethod = jsonMethod, verbose = verbose).get()
+            return CoreFactory(inDir, inverses = inverses, split = !one, fileext = fileext, jsonMethod = jsonMethod, verbose = verbose).get()
         }
 
         /**

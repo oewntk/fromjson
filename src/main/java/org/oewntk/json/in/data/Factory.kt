@@ -16,9 +16,10 @@ import java.util.function.Supplier
  */
 class Factory(
     private val inDir: File,
-    val split: Boolean = true,
-    val fileext: String = "json",
-    val jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
+    private val inverses: Boolean = false,
+    private val split: Boolean = true,
+    private val fileext: String = "json",
+    private val jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
     private val verbose: Boolean = false,
 ) : Supplier<Model?> {
 
@@ -54,7 +55,7 @@ class Factory(
         if (!inDir.exists()) {
             throw IllegalArgumentException(inDir.absolutePath)
         }
-        val coreModel = CoreFactory(inDir, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
+        val coreModel = CoreFactory(inDir, inverses= inverses, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
         try {
             val framesAndTemplates = jsonExtra(inDir)
             val (frames, templates) = framesAndTemplates
@@ -80,9 +81,14 @@ class Factory(
             var fileext = "json"
             var one = false
             var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
+                iArg++
+            }
+            if ("--inverses" == args[iArg]) {
+                inverses = true
                 iArg++
             }
             if ("--ext" == args[iArg]) {
@@ -108,7 +114,7 @@ class Factory(
             }
             val inDir = File(args[iArg])
 
-            return Factory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
+            return Factory(inDir, inverses = inverses, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
         }
 
         /**

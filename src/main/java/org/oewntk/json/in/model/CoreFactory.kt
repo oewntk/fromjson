@@ -18,6 +18,7 @@ import java.util.function.Supplier
  */
 class CoreFactory(
     private val file: File,
+    private val inverses: Boolean = false,
     private val verbose: Boolean = false,
 ) : Supplier<CoreModel?> {
 
@@ -27,7 +28,10 @@ class CoreFactory(
     private fun deserializeCoreModel(file: File): CoreModel? {
         val jsonString = file.readText()
         val data: DataCoreModel? = json.decodeFromString(jsonString)
-        return data?.let { CoreModel(it.lexes, it.senses, it.synsets) }
+        return data?.let {
+            CoreModel(it.lexes, it.senses, it.synsets)
+                .apply { if (inverses) generateInverseRelations() }
+        }
     }
 
     override fun get(): CoreModel? {
@@ -53,13 +57,18 @@ class CoreFactory(
          */
         private fun makeCoreModel(args: Array<String>): CoreModel? {
             var iArg = 0
+            var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
                 iArg++
             }
+            if ("--inverses" == args[iArg]) {
+                inverses = true
+                iArg++
+            }
             val inDir = File(args[iArg])
-            return CoreFactory(inDir, verbose = verbose).get()
+            return CoreFactory(inDir, inverses = inverses, verbose = verbose).get()
         }
 
         /**

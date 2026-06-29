@@ -18,6 +18,7 @@ import java.util.function.Supplier
  */
 class Factory(
     private val file: File,
+    private val inverses: Boolean = false,
     private val verbose: Boolean = false,
 ) : Supplier<Model?> {
 
@@ -27,7 +28,7 @@ class Factory(
     private fun deserializeModel(file: File): Model? {
         val jsonString = file.readText()
         val data: DataModel? = json.decodeFromString(jsonString)
-        return data?.let { Model(it.lexes, it.senses, it.synsets, it.verbFrames, it.verbTemplates) }
+        return data?.let { Model(it.lexes, it.senses, it.synsets, it.verbFrames, it.verbTemplates).apply { if (inverses) generateInverseRelations() } }
     }
 
     override fun get(): Model? {
@@ -53,13 +54,18 @@ class Factory(
          */
         private fun makeModel(args: Array<String>): Model? {
             var iArg = 0
+            var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
                 iArg++
             }
+            if ("--inverses" == args[iArg]) {
+                inverses = true
+                iArg++
+            }
             val inDir = File(args[iArg])
-            return Factory(inDir, verbose = verbose).get()
+            return Factory(inDir, inverses = inverses, verbose = verbose).get()
         }
 
         /**

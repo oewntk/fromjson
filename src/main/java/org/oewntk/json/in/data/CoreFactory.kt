@@ -16,8 +16,9 @@ import java.util.function.Supplier
  */
 class CoreFactory(
     private val inDir: File,
-    val split: Boolean = true,
-    val fileext: String = "json",
+    private val inverses: Boolean = false,
+    private val split: Boolean = true,
+    private val fileext: String = "json",
     jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
     private val verbose: Boolean = false,
 ) : Supplier<CoreModel?> {
@@ -56,6 +57,7 @@ class CoreFactory(
         val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
         val senses = dataSenses.map { senseFromData(it) }.distinct()
         return CoreModel(lexes, senses, synsets)
+            .apply { if (inverses) generateInverseRelations() }
     }
 
     override fun get(): CoreModel? {
@@ -84,9 +86,14 @@ class CoreFactory(
             var fileext = "json"
             var one = false
             var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
                 verbose = true
+                iArg++
+            }
+            if ("--inverses" == args[iArg]) {
+                inverses = true
                 iArg++
             }
             if ("--ext" == args[iArg]) {
@@ -112,7 +119,7 @@ class CoreFactory(
             }
             val inDir = File(args[iArg])
 
-            return CoreFactory(inDir, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
+            return CoreFactory(inDir, inverses = inverses, fileext = fileext, jsonMethod = jsonMethod, split = !one, verbose = verbose).get()
         }
 
         /**
