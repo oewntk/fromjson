@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/jsondata" />
       <excludeFolder url="file://$MODULE_DIR$/jsonmodel" />
       <excludeFolder url="file://$MODULE_DIR$/jsondata1" />
+      <excludeFolder url="file://$MODULE_DIR$/images" />
     </content>
   </component>
 </module>
