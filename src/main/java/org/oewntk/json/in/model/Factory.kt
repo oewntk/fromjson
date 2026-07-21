@@ -22,7 +22,6 @@ class Factory(
     private val verbose: Boolean = false,
 ) : Supplier<Model?> {
 
-    @OptIn(ExperimentalSerializationApi::class)
     val json = Json
 
     private fun deserializeModel(file: File): Model? {

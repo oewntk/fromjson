@@ -22,7 +22,6 @@ class CoreFactory(
     private val verbose: Boolean = false,
 ) : Supplier<CoreModel?> {
 
-    @OptIn(ExperimentalSerializationApi::class)
     val json = Json
 
     private fun deserializeCoreModel(file: File): CoreModel? {
