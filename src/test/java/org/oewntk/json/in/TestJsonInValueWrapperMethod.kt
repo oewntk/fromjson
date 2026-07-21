@@ -47,8 +47,7 @@ class TestJsonInValueWrapperMethod {
 
     companion object {
 
-        val silent = if (System.getProperties().containsKey("VERBOSE")) false
-        else if (System.getProperties().containsKey("SILENT")) true
+        val silent = !System.getProperties().containsKey("VERBOSE") && if (System.getProperties().containsKey("SILENT")) true
         else true
 
         val ps: PrintStream = if (!silent) Tracing.psInfo else Tracing.psNull
