@@ -1,6 +1,5 @@
 package org.oewntk.json.`in`.model
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.oewntk.json.`in`.Tracing
 import org.oewntk.model.DataModel
