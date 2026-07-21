@@ -1,6 +1,5 @@
 package org.oewntk.json.`in`
 
-import kotlinx.serialization.SerializationException
 import org.junit.Test
 import org.oewntk.json.`in`.LibTestData.lex
 import org.oewntk.json.`in`.LibTestData.sense
