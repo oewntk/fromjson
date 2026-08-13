@@ -63,8 +63,8 @@ class CoreFactory(
         } else {
             val file = File(inDir, "oewn.$fileext")
             if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-            val content = file.readText()
-            val topDict = safeCast<Map<String, Any>>(json.decodeFromString(content))
+            val text = file.readText()
+            val topDict = safeCast<Map<String, Any>>(json.decodeFromString(text))
 
             val lexTopDict = safeCast<Map<Lemma,  Map<Key2, Map<String, Any>>>>(topDict["lexes"]!!)
             val (allLexes, allSenses) = lexesAndSensesFromOEWNData(lexTopDict)
