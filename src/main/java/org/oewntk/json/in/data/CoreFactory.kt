@@ -27,34 +27,38 @@ class CoreFactory(
 
     private fun jsonCoreModel(dir: File): CoreModel {
 
-        val (lexContent, synsetContent, senseContent) =
-            if (split) {
-                var file = File(dir, "oewn-lexes.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-                val lexContent = file.readText()
+        val (dataLexes, dataSynsets, dataSenses) = if (split) {
+            var file = File(dir, "oewn-lexes.$fileext")
+            if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+            val lexContent = file.readText()
 
-                file = File(dir, "oewn-synsets.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-                val synsetContent = file.readText()
+            file = File(dir, "oewn-synsets.$fileext")
+            if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+            val synsetContent = file.readText()
 
-                file = File(dir, "oewn-senses.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-                val senseContent = file.readText()
+            file = File(dir, "oewn-senses.$fileext")
+            if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+            val senseContent = file.readText()
 
-                Triple(lexContent, synsetContent, senseContent)
-            } else {
-                val file = File(dir, "oewn.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-                val text = file.readText()
-                val content = text.split("\n\n")
+            val dataLexes = safeCast<List<Map<Lemma, Map<Key2, Map<String, Any>>>>>(json.decodeFromString(lexContent))
+            val dataSynsets = safeCast<List<Map<String, Any>>>(json.decodeFromString(synsetContent))
+            val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
 
-                Triple(content[0], content[1], content[2])
-            }
-        val dataLexes = safeCast<List<Map<String, Any>>>(json.decodeFromString(lexContent))
+            Triple(dataLexes, dataSynsets, dataSenses)
+        } else {
+            val file = File(dir, "oewn.$fileext")
+            if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
+            val text = file.readText()
+            val topDict = safeCast<Map<String, Any>>(json.decodeFromString(text))
+            val dataLexes = safeCast<List<Map<Lemma, Map<Key2, Map<String, Any>>>>>(topDict["lexes"]!!)
+            val dataSynsets = safeCast<List<Map<SynsetId, Any>>>(topDict["synsets"]!!)
+            val dataSenses = safeCast<List<Map<SynsetId, Any>>>(topDict["senses"]!!)
+
+            Triple(dataLexes, dataSynsets, dataSenses)
+        }
+
         val lexes = dataLexes.map { lexFromData(it) }.distinct()
-        val dataSynsets = safeCast<List<Map<String, Any>>>(json.decodeFromString(synsetContent))
         val synsets = dataSynsets.map { synsetFromData(it) }.distinct()
-        val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
         val senses = dataSenses.map { senseFromData(it) }.distinct()
         return CoreModel(lexes, senses, synsets)
             .apply { if (inverses) generateInverseRelations() }

@@ -27,24 +27,24 @@ class Factory(
 
     private fun jsonExtra(dir: File): Pair<List<VerbFrame>, List<VerbTemplate>> {
 
-        val (frameContent, templateContent) =
-            if (split) {
-                val frameFile = File(dir, "oewn-frames.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", frameFile)
-                val frameContent = frameFile.readText()
+        //val (frameContent, templateContent) =
+        //if (split) {
+        val frameFile = File(dir, "oewn-frames.$fileext")
+        if (verbose) Tracing.psInfo.printf("[File] %s%n", frameFile)
+        val frameContent = frameFile.readText()
 
-                val templateFile = File(dir, "oewn-templates.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", templateFile)
-                val templateContent = templateFile.readText()
+        val templateFile = File(dir, "oewn-templates.$fileext")
+        if (verbose) Tracing.psInfo.printf("[File] %s%n", templateFile)
+        val templateContent = templateFile.readText()
 
-                frameContent to templateContent
-            } else {
-                val frameAndTemplateFile = File(dir, "oewn-frames_templates.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
-                val text = frameAndTemplateFile.readText()
-                val content = text.split("\n\n")
-                content[0] to content[1]
-            }
+        //frameContent to templateContent
+        //} else {
+        //    val frameAndTemplateFile = File(dir, "oewn-frames_templates.$fileext")
+        //    if (verbose) Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
+        //    val text = frameAndTemplateFile.readText()
+        //    val content = text.split("\n\n")
+        //    content[0] to content[1]
+        //}
         val frames = safeCast<Map<String, String>>(json.decodeFromString(frameContent))
         val templates = safeCast<Map<String, String>>(json.decodeFromString(templateContent))
         return (frames.map { VerbFrame(it.key, it.value) }.toList()) to (templates.map { VerbTemplate(it.key.toInt(), it.value) }.toList())
@@ -55,7 +55,7 @@ class Factory(
         if (!inDir.exists()) {
             throw IllegalArgumentException(inDir.absolutePath)
         }
-        val coreModel = CoreFactory(inDir, inverses= inverses, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
+        val coreModel = CoreFactory(inDir, inverses = inverses, split = split, fileext = fileext, jsonMethod = jsonMethod).get()
         try {
             val framesAndTemplates = jsonExtra(inDir)
             val (frames, templates) = framesAndTemplates
