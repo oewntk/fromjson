@@ -19,7 +19,7 @@ class CoreFactory(
     private val inverses: Boolean = false,
     private val split: Boolean = true,
     private val fileext: String = "json",
-    jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
+    jsonMethod: JsonMethod = JsonMethod.JSON_ELEMENT,
     private val verbose: Boolean = false,
 ) : Supplier<CoreModel?> {
 
@@ -85,7 +85,7 @@ class CoreFactory(
             var iArg = 0
             var fileext = "json"
             var one = false
-            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var jsonMethod = JsonMethod.JSON_ELEMENT
             var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
