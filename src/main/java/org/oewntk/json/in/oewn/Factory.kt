@@ -28,8 +28,8 @@ class Factory(
 
     private fun jsonExtra(dir: File): Pair<List<VerbFrame>, List<VerbTemplate>> {
 
-        val (frameContent, templateContent) =
-            if (split) {
+        //val (frameContent, templateContent) =
+            //if (split) {
                 val frameFile = File(dir, "frames.$fileext")
                 if (verbose) Tracing.psInfo.printf("[File] %s%n", frameFile)
                 val frameContent = frameFile.readText()
@@ -38,14 +38,14 @@ class Factory(
                 if (verbose) Tracing.psInfo.printf("[File] %s%n", templateFile)
                 val templateContent = templateFile.readText()
 
-                frameContent to templateContent
-            } else {
-                val frameAndTemplateFile = File(dir, "frames_templates.$fileext")
-                if (verbose) Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
-                val text = frameAndTemplateFile.readText()
-                val content = text.split("\n\n")
-                content[0] to content[1]
-            }
+            //    frameContent to templateContent
+            //} else {
+            //    val frameAndTemplateFile = File(dir, "frames_templates.$fileext")
+            //    if (verbose) Tracing.psInfo.printf("[File] %s%n", frameAndTemplateFile)
+            //    val text = frameAndTemplateFile.readText()
+            //    val content = text.split("\n\n")
+            //    content[0] to content[1]
+            //}
         val frameMap = safeCast<Map<VerbFrameId, String>>(json.decodeFromString(frameContent))
         val templateMap = safeCast<Map<String, String>>(json.decodeFromString(templateContent))
         val frames = frameMap.entries.map { VerbFrame(it.key, it.value) }.toList()
@@ -82,7 +82,7 @@ class Factory(
             var iArg = 0
             var fileext = "json"
             var one = false
-            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var jsonMethod = JsonMethod.JSON_ELEMENT
             var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {

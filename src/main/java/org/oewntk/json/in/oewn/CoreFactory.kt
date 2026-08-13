@@ -19,7 +19,7 @@ class CoreFactory(
     private val inverses: Boolean = false,
     private val split: Boolean = true,
     private val fileext: String = "json",
-    jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
+    jsonMethod: JsonMethod = JsonMethod.JSON_ELEMENT,
     private val verbose: Boolean = true,
 ) : Supplier<CoreModel?> {
 
@@ -63,10 +63,13 @@ class CoreFactory(
         } else {
             val file = File(inDir, "oewn.$fileext")
             if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
-            val content = file.readText().split("\n\n")
-            val lexTopDict = safeCast<Map<Lemma, Map<Key2, Map<String, Any>>>>(json.decodeFromString(content[0]))
+            val content = file.readText()
+            val topDict = safeCast<Map<String, Any>>(json.decodeFromString(content))
+
+            val lexTopDict = safeCast<Map<Lemma,  Map<Key2, Map<String, Any>>>>(topDict["lexes"]!!)
             val (allLexes, allSenses) = lexesAndSensesFromOEWNData(lexTopDict)
-            val dataTopDict = safeCast<Map<SynsetId, Any>>(json.decodeFromString(content[1]))
+
+            val dataTopDict = safeCast<Map<SynsetId, Any>>(topDict["synsets"]!!)
             val allSynsets = dataTopDict.asSequence().map {
                 val synsetDict = safeCast<Map<String, Any>>(it.value)
                 synsetFromOEWNData(it.key, synsetDict)
