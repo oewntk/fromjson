@@ -19,7 +19,7 @@ class Factory(
     private val inverses: Boolean = false,
     private val split: Boolean = true,
     private val fileext: String = "json",
-    private val jsonMethod: JsonMethod = JsonMethod.ANY_SERIALIZER,
+    private val jsonMethod: JsonMethod = JsonMethod.JSON_ELEMENT,
     private val verbose: Boolean = false,
 ) : Supplier<Model?> {
 

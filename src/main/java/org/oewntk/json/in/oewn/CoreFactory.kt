@@ -106,7 +106,7 @@ class CoreFactory(
             var iArg = 0
             var fileext = "json"
             var one = false
-            var jsonMethod = JsonMethod.ANY_SERIALIZER
+            var jsonMethod = JsonMethod.JSON_ELEMENT
             var inverses = false
             var verbose = false
             if ("--verbose" == args[iArg]) {
