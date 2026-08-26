@@ -51,8 +51,8 @@ class CoreFactory(
             val text = file.readText()
             val topDict = safeCast<Map<String, Any>>(json.decodeFromString(text))
             val dataLexes = safeCast<List<Map<Lemma, Map<Key2, Map<String, Any>>>>>(topDict["lexes"]!!)
-            val dataSynsets = safeCast<List<Map<SynsetId, Any>>>(topDict["synsets"]!!)
-            val dataSenses = safeCast<List<Map<SynsetId, Any>>>(topDict["senses"]!!)
+            val dataSynsets = safeCast<List<Map<String, Any>>>(topDict["synsets"]!!)
+            val dataSenses = safeCast<List<Map<String, Any>>>(topDict["senses"]!!)
 
             Triple(dataLexes, dataSynsets, dataSenses)
         }
