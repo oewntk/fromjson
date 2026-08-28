@@ -44,10 +44,10 @@ class CoreFactory(
             val synsets = synsetFiles.map { file ->
                 if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val content = file.readText()
-                val topDict = safeCast<Map<SynsetId, Any>>(json.decodeFromString(content))
+                val topDict = safeCast<Map<String, Any>>(json.decodeFromString(content))
                 topDict.asSequence().map {
                     val synsetDict = safeCast<Map<String, Any>>(it.value)
-                    synsetFromOEWNData(it.key, synsetDict)
+                    synsetFromOEWNData(SynsetId(it.key), synsetDict)
                 }
             }
             val allSynsets = synsets.asSequence().flatten()
@@ -69,10 +69,10 @@ class CoreFactory(
             val lexTopDict = safeCast<Map<Lemma,  Map<Key2, Map<String, Any>>>>(topDict["lexes"]!!)
             val (allLexes, allSenses) = lexesAndSensesFromOEWNData(lexTopDict)
 
-            val dataTopDict = safeCast<Map<SynsetId, Any>>(topDict["synsets"]!!)
+            val dataTopDict = safeCast<Map<String, Any>>(topDict["synsets"]!!)
             val allSynsets = dataTopDict.asSequence().map {
                 val synsetDict = safeCast<Map<String, Any>>(it.value)
-                synsetFromOEWNData(it.key, synsetDict)
+                synsetFromOEWNData(SynsetId(it.key), synsetDict)
             }
 
             // model
