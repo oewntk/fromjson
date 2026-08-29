@@ -63,7 +63,7 @@ class Factory(
             val framesAndTemplates = jsonExtra(inDir)
             val (frames, templates) = framesAndTemplates
             val data = DataModel(coreModel!!, frames, templates)
-            return Model(data, inDir.absolutePath, inDir.absolutePath)
+            return Model(data, inDir.absolutePath, inDir.absolutePath, coreModel.generatedInverses)
         } catch (e: IOException) {
             e.printStackTrace(Tracing.psErr)
         }
