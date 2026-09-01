@@ -40,7 +40,7 @@ class CoreFactory(
             if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
             val senseContent = file.readText()
 
-            val dataLexes = safeCast<List<Map<String, Map<Key2, Map<String, Any>>>>>(json.decodeFromString(lexContent))
+            val dataLexes = safeCast<List<Map<String, Map<String, Map<String, Any>>>>>(json.decodeFromString(lexContent))
             val dataSynsets = safeCast<List<Map<String, Any>>>(json.decodeFromString(synsetContent))
             val dataSenses = safeCast<List<Map<String, Any>>>(json.decodeFromString(senseContent))
 
@@ -50,7 +50,7 @@ class CoreFactory(
             if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
             val text = file.readText()
             val topDict = safeCast<Map<String, Any>>(json.decodeFromString(text))
-            val dataLexes = safeCast<List<Map<String, Map<Key2, Map<String, Any>>>>>(topDict["lexes"]!!)
+            val dataLexes = safeCast<List<Map<String, Map<String, Map<String, Any>>>>>(topDict["lexes"]!!)
             val dataSynsets = safeCast<List<Map<String, Any>>>(topDict["synsets"]!!)
             val dataSenses = safeCast<List<Map<String, Any>>>(topDict["senses"]!!)
 

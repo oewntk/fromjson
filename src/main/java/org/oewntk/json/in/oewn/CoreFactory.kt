@@ -33,7 +33,7 @@ class CoreFactory(
             val lexesAndSenses = entryFiles.map { file ->
                 if (verbose) Tracing.psInfo.printf("[File] %s%n", file)
                 val content = file.readText()
-                val topDict = safeCast<Map<String, Map<Key2, Map<String, Any>>>>(json.decodeFromString(content))
+                val topDict = safeCast<Map<String, Map<String, Map<String, Any>>>>(json.decodeFromString(content))
                 lexesAndSensesFromOEWNData(topDict)
             }
             val allLexes = lexesAndSenses.asSequence().flatMap { it.first }
@@ -66,7 +66,7 @@ class CoreFactory(
             val text = file.readText()
             val topDict = safeCast<Map<String, Any>>(json.decodeFromString(text))
 
-            val lexTopDict = safeCast<Map<String,  Map<Key2, Map<String, Any>>>>(topDict["lexes"]!!)
+            val lexTopDict = safeCast<Map<String,  Map<String, Map<String, Any>>>>(topDict["lexes"]!!)
             val (allLexes, allSenses) = lexesAndSensesFromOEWNData(lexTopDict)
 
             val dataTopDict = safeCast<Map<String, Any>>(topDict["synsets"]!!)
